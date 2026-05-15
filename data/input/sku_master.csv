@@ -1,0 +1,4 @@
+sku_id,sku_name,category,demand_pattern,shelf_life_weeks,case_pack_size,unit_cost,list_price,storage_type,is_perishable
+SKU_A,Stable Pantry Staple,ambient_food,stable_low_variance,26,12,2.1,3.49,ambient,False
+SKU_B,Promotion Sensitive Beverage,beverage,promotion_sensitive,18,24,1.25,2.29,ambient,False
+SKU_C,Short Shelf Life Fresh Item,fresh_food,slow_moving_perishable,3,6,3.4,5.99,chilled,True
