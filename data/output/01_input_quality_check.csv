@@ -1,0 +1,20 @@
+check_name,table_name,status,issue_count,message
+input_files_exist,all_input_tables,PASS,0,All input CSV files exist.
+required_columns_exist,sku_master,PASS,0,All required columns exist.
+required_columns_exist,weekly_sales_inventory,PASS,0,All required columns exist.
+required_columns_exist,promotion_calendar,PASS,0,All required columns exist.
+required_columns_exist,supplier_constraints,PASS,0,All required columns exist.
+weekly_duplicate_key,weekly_sales_inventory,PASS,0,No duplicate week + sku_id + warehouse_id keys.
+sales_qty_non_negative,weekly_sales_inventory,PASS,0,All sales_qty values are non-negative.
+on_hand_qty_non_negative,weekly_sales_inventory,PASS,0,All on_hand_qty values are non-negative.
+inbound_qty_non_negative,weekly_sales_inventory,PASS,0,All inbound_qty values are non-negative.
+expired_qty_non_negative,weekly_sales_inventory,PASS,0,All expired_qty values are non-negative.
+stockout_flag_binary,weekly_sales_inventory,PASS,0,All stockout_flag values are 0 or 1.
+promo_flag_binary,promotion_calendar,PASS,0,All promo_flag values are 0 or 1.
+expected_uplift_rate_non_negative,promotion_calendar,PASS,0,All expected_uplift_rate values are greater than or equal to 0.
+otif_rate_range,supplier_constraints,PASS,0,All otif_rate values are between 0 and 1.
+supplier_risk_score_range,supplier_constraints,PASS,0,All supplier_risk_score values are between 0 and 1.
+sku_id_exists_in_sku_master,weekly_sales_inventory,PASS,0,All sku_id values exist in sku_master.
+sku_id_exists_in_sku_master,promotion_calendar,PASS,0,All sku_id values exist in sku_master.
+sku_id_exists_in_sku_master,supplier_constraints,PASS,0,All sku_id values exist in sku_master.
+warehouse_id_allowed,weekly_sales_inventory,PASS,0,All warehouse_id values are in DC_01.

@@ -47,3 +47,11 @@ python scripts/01_generate_synthetic_data.py
 ```
 
 The script validates required columns from `schema.py`, writes all four CSVs, and prints each generated dataset head.
+
+## Stage 2 validation
+
+```bash
+python scripts/02_run_validation.py
+```
+
+The validation script checks the four input CSVs against the schema contract and writes `data/output/01_input_quality_check.csv`.

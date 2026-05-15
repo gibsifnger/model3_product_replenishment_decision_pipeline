@@ -22,6 +22,7 @@ FORECAST_HORIZON_WEEKS = 4
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = REPO_ROOT / "data"
 INPUT_DATA_DIR = DATA_DIR / "input"
+OUTPUT_DATA_DIR = DATA_DIR / "output"
 
 SKU_MASTER_FILENAME = "sku_master.csv"
 WEEKLY_SALES_INVENTORY_FILENAME = "weekly_sales_inventory.csv"
