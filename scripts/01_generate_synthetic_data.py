@@ -44,7 +44,12 @@ def main() -> None:
     for dataset_name, rows in bundle.as_dict().items():
         validate_required_columns(dataset_name, rows[0].keys() if rows else ())
         output_path = INPUT_CSV_PATHS[dataset_name]
-        print(f"\n[{dataset_name}] wrote {len(rows):,} rows to {output_path.relative_to(REPO_ROOT)}")
+        shape = (len(rows), len(REQUIRED_COLUMNS_BY_DATASET[dataset_name]))
+        print(
+            f"\n[{dataset_name}] wrote {len(rows):,} rows to "
+            f"{output_path.relative_to(REPO_ROOT)}"
+        )
+        print(f"shape: {shape}")
         print(_format_head(rows, dataset_name))
 
 

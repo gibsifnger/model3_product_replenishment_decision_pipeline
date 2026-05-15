@@ -56,6 +56,7 @@ SKU_ATTRIBUTES: dict[str, dict[str, Any]] = {
         "list_price": 3.49,
         "storage_type": "ambient",
         "is_perishable": False,
+        "abc_class": "A",
     },
     "SKU_B": {
         "sku_name": "Promotion Sensitive Beverage",
@@ -67,6 +68,7 @@ SKU_ATTRIBUTES: dict[str, dict[str, Any]] = {
         "list_price": 2.29,
         "storage_type": "ambient",
         "is_perishable": False,
+        "abc_class": "A",
     },
     "SKU_C": {
         "sku_name": "Short Shelf Life Fresh Item",
@@ -78,6 +80,7 @@ SKU_ATTRIBUTES: dict[str, dict[str, Any]] = {
         "list_price": 5.99,
         "storage_type": "chilled",
         "is_perishable": True,
+        "abc_class": "C",
     },
 }
 
@@ -89,6 +92,7 @@ SUPPLIER_ATTRIBUTES: dict[str, dict[str, Any]] = {
         "order_multiple": 12,
         "max_order_qty": 480,
         "service_level_target": 0.95,
+        "supplier_risk_score": 0.12,
     },
     "SKU_B": {
         "supplier_id": "SUP_BEVERAGE_01",
@@ -97,6 +101,7 @@ SUPPLIER_ATTRIBUTES: dict[str, dict[str, Any]] = {
         "order_multiple": 24,
         "max_order_qty": 960,
         "service_level_target": 0.93,
+        "supplier_risk_score": 0.18,
     },
     "SKU_C": {
         "supplier_id": "SUP_FRESH_01",
@@ -105,6 +110,7 @@ SUPPLIER_ATTRIBUTES: dict[str, dict[str, Any]] = {
         "order_multiple": 6,
         "max_order_qty": 180,
         "service_level_target": 0.90,
+        "supplier_risk_score": 0.28,
     },
 }
 
@@ -122,16 +128,27 @@ def _validate_rows(dataset_name: str, rows: DatasetRows) -> None:
 
 def generate_sku_master() -> DatasetRows:
     """Create SKU-level descriptive attributes for the fixed stage-1 scope."""
-    rows = [{"sku_id": sku_id, **SKU_ATTRIBUTES[sku_id]} for sku_id in SKU_IDS]
+    rows = [
+        {
+            "sku_id": sku_id,
+            "category": SKU_ATTRIBUTES[sku_id]["category"],
+            "shelf_life_days": int(SKU_ATTRIBUTES[sku_id]["shelf_life_weeks"]) * 7,
+            "unit_cost": SKU_ATTRIBUTES[sku_id]["unit_cost"],
+            "unit_price": SKU_ATTRIBUTES[sku_id]["list_price"],
+            "storage_type": SKU_ATTRIBUTES[sku_id]["storage_type"],
+            "abc_class": SKU_ATTRIBUTES[sku_id]["abc_class"],
+        }
+        for sku_id in SKU_IDS
+    ]
     _validate_rows("sku_master", rows)
     return rows
 
 
 def _promotion_for_sku_week(sku_id: str, week_index: int) -> tuple[int, str, float]:
     if sku_id == "SKU_B" and week_index in {7, 15, 23, 31, 39, 47}:
-        return 1, "temporary_price_reduction", 0.25
+        return 1, "temporary_price_reduction", 0.80
     if sku_id == "SKU_A" and week_index in {12, 36}:
-        return 1, "feature_display", 0.10
+        return 1, "feature_display", 0.15
     return 0, "none", 0.00
 
 
@@ -142,17 +159,17 @@ def generate_promotion_calendar(week_start_dates: list[date] | None = None) -> D
     for week_index, week_start_date in enumerate(dates):
         for sku_id in SKU_IDS:
             for warehouse_id in WAREHOUSE_IDS:
-                promotion_flag, promotion_type, discount_pct = _promotion_for_sku_week(
+                _ = warehouse_id
+                promo_flag, promo_type, expected_uplift_rate = _promotion_for_sku_week(
                     sku_id, week_index
                 )
                 rows.append(
                     {
-                        "week_start_date": week_start_date.isoformat(),
+                        "week": week_start_date.isoformat(),
                         "sku_id": sku_id,
-                        "warehouse_id": warehouse_id,
-                        "promotion_flag": promotion_flag,
-                        "promotion_type": promotion_type,
-                        "discount_pct": discount_pct,
+                        "promo_flag": promo_flag,
+                        "promo_type": promo_type,
+                        "expected_uplift_rate": expected_uplift_rate,
                     }
                 )
     _validate_rows("promotion_calendar", rows)
@@ -182,6 +199,16 @@ def _inventory_units(sku_id: str, sales_units: int, week_index: int, rng: random
     raise KeyError(f"Unknown SKU '{sku_id}'")
 
 
+def _inbound_qty(sku_id: str, week_index: int) -> int:
+    if sku_id == "SKU_A":
+        return 144 if week_index % 4 == 1 else 0
+    if sku_id == "SKU_B":
+        return 240 if week_index % 6 == 2 else 0
+    if sku_id == "SKU_C":
+        return 36 if week_index % 2 == 0 else 0
+    raise KeyError(f"Unknown SKU '{sku_id}'")
+
+
 def generate_weekly_sales_inventory(
     promotion_calendar: DatasetRows,
     seed: int = 42,
@@ -196,7 +223,7 @@ def generate_weekly_sales_inventory(
         sales_units = _sales_units(
             sku_id=sku_id,
             week_index=week_index,
-            promotion_flag=int(promo_row["promotion_flag"]),
+            promotion_flag=int(promo_row["promo_flag"]),
             rng=rng,
         )
         ending_inventory_units = _inventory_units(sku_id, sales_units, week_index, rng)
@@ -205,19 +232,18 @@ def generate_weekly_sales_inventory(
             waste_base = 1.6 if ending_inventory_units > 18 else 0.3
             waste_units = max(0, round(rng.gauss(waste_base, 0.7)))
         stockout_units = max(0, round(rng.gauss(3, 2))) if ending_inventory_units < 10 else 0
-        list_price = float(SKU_ATTRIBUTES[sku_id]["list_price"])
-        unit_price = round(list_price * (1 - float(promo_row["discount_pct"])), 2)
+        inbound_qty = _inbound_qty(sku_id, week_index)
 
         rows.append(
             {
-                "week_start_date": promo_row["week_start_date"],
+                "week": promo_row["week"],
                 "sku_id": sku_id,
-                "warehouse_id": promo_row["warehouse_id"],
-                "sales_units": sales_units,
-                "ending_inventory_units": ending_inventory_units,
-                "waste_units": waste_units,
-                "stockout_units": stockout_units,
-                "unit_price": unit_price,
+                "warehouse_id": WAREHOUSE_IDS[0],
+                "sales_qty": sales_units,
+                "on_hand_qty": ending_inventory_units,
+                "inbound_qty": inbound_qty,
+                "stockout_flag": 1 if stockout_units > 0 else 0,
+                "expired_qty": waste_units,
             }
         )
 
@@ -226,17 +252,21 @@ def generate_weekly_sales_inventory(
 
 
 def generate_supplier_constraints() -> DatasetRows:
-    """Create supplier and order-constraint inputs for each SKU and warehouse."""
+    """Create supplier and order-constraint inputs for each SKU."""
     rows: DatasetRows = []
     for sku_id in SKU_IDS:
-        for warehouse_id in WAREHOUSE_IDS:
-            rows.append(
-                {
-                    "sku_id": sku_id,
-                    "warehouse_id": warehouse_id,
-                    **SUPPLIER_ATTRIBUTES[sku_id],
-                }
-            )
+        supplier_attributes = SUPPLIER_ATTRIBUTES[sku_id]
+        rows.append(
+            {
+                "supplier_id": supplier_attributes["supplier_id"],
+                "sku_id": sku_id,
+                "lead_time_days": int(supplier_attributes["lead_time_weeks"]) * 7,
+                "moq_qty": supplier_attributes["min_order_qty"],
+                "box_multiple_qty": supplier_attributes["order_multiple"],
+                "otif_rate": supplier_attributes["service_level_target"],
+                "supplier_risk_score": supplier_attributes["supplier_risk_score"],
+            }
+        )
     _validate_rows("supplier_constraints", rows)
     return rows
 

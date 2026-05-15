@@ -1,4 +1,4 @@
-sku_id,warehouse_id,supplier_id,lead_time_weeks,min_order_qty,order_multiple,max_order_qty,service_level_target
-SKU_A,DC_01,SUP_AMBIENT_01,1,48,12,480,0.95
-SKU_B,DC_01,SUP_BEVERAGE_01,2,96,24,960,0.93
-SKU_C,DC_01,SUP_FRESH_01,1,18,6,180,0.9
+supplier_id,sku_id,lead_time_days,moq_qty,box_multiple_qty,otif_rate,supplier_risk_score
+SUP_AMBIENT_01,SKU_A,7,48,12,0.95,0.12
+SUP_BEVERAGE_01,SKU_B,14,96,24,0.93,0.18
+SUP_FRESH_01,SKU_C,7,18,6,0.9,0.28

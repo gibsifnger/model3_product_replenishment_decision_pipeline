@@ -6,46 +6,41 @@ from collections.abc import Iterable
 
 SKU_MASTER_COLUMNS = (
     "sku_id",
-    "sku_name",
     "category",
-    "demand_pattern",
-    "shelf_life_weeks",
-    "case_pack_size",
+    "shelf_life_days",
     "unit_cost",
-    "list_price",
+    "unit_price",
     "storage_type",
-    "is_perishable",
+    "abc_class",
 )
 
 WEEKLY_SALES_INVENTORY_COLUMNS = (
-    "week_start_date",
+    "week",
     "sku_id",
     "warehouse_id",
-    "sales_units",
-    "ending_inventory_units",
-    "waste_units",
-    "stockout_units",
-    "unit_price",
+    "sales_qty",
+    "on_hand_qty",
+    "inbound_qty",
+    "stockout_flag",
+    "expired_qty",
 )
 
 PROMOTION_CALENDAR_COLUMNS = (
-    "week_start_date",
+    "week",
     "sku_id",
-    "warehouse_id",
-    "promotion_flag",
-    "promotion_type",
-    "discount_pct",
+    "promo_flag",
+    "promo_type",
+    "expected_uplift_rate",
 )
 
 SUPPLIER_CONSTRAINTS_COLUMNS = (
-    "sku_id",
-    "warehouse_id",
     "supplier_id",
-    "lead_time_weeks",
-    "min_order_qty",
-    "order_multiple",
-    "max_order_qty",
-    "service_level_target",
+    "sku_id",
+    "lead_time_days",
+    "moq_qty",
+    "box_multiple_qty",
+    "otif_rate",
+    "supplier_risk_score",
 )
 
 REQUIRED_COLUMNS_BY_DATASET = {
