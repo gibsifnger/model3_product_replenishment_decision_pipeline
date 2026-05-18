@@ -87,3 +87,11 @@ python scripts/06_generate_candidates.py
 ```
 
 The candidate generator expands each SKU-warehouse row across fixed actions and writes order candidates to `data/output/05_candidate_orders.csv`.
+
+## Stage 7 gate check
+
+```bash
+python scripts/07_run_gate_check.py
+```
+
+The gate checker validates candidate orders against operational constraints and writes pass/fail results to `data/output/06_gate_result.csv`.

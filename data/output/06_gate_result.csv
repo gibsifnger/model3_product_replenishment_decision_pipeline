@@ -1,0 +1,19 @@
+﻿snapshot_week,sku_id,warehouse_id,action_id,action_name,candidate_order_qty,moq_qty,box_multiple_qty,lead_time_days,shelf_life_days,forecast_2w_qty,forecast_4w_total_qty,available_qty,primary_risk_type,moq_gate_status,box_multiple_gate_status,lead_time_gate_status,shelf_life_gate_status,warehouse_capacity_gate_status,overall_gate_status,failed_gate_count,gate_comment
+2025-12-29,SKU_A,DC_01,1,hold,0,48,12,7,182,178.22540388035776,351.56526841192795,112,stockout,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured; hold action with zero order quantity
+2025-12-29,SKU_A,DC_01,2,order_moq,48,48,12,7,182,178.22540388035776,351.56526841192795,112,stockout,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured
+2025-12-29,SKU_A,DC_01,3,order_1w_cover,0,48,12,7,182,178.22540388035776,351.56526841192795,112,stockout,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured
+2025-12-29,SKU_A,DC_01,4,order_2w_cover,66,48,12,7,182,178.22540388035776,351.56526841192795,112,stockout,PASS,FAIL,PASS,PASS,PASS,FAIL,1,candidate_order_qty is not a box_multiple_qty multiple; max_order_qty not configured
+2025-12-29,SKU_A,DC_01,5,expedite,0,48,12,7,182,178.22540388035776,351.56526841192795,112,stockout,PASS,PASS,PASS,PASS,PASS,PASS,0,expedite candidate; lead time gate reviewed separately; max_order_qty not configured
+2025-12-29,SKU_A,DC_01,6,reduce_review,0,48,12,7,182,178.22540388035776,351.56526841192795,112,stockout,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured; reduce_review action with zero order quantity
+2025-12-29,SKU_B,DC_01,1,hold,0,96,24,14,126,135.55741288601854,297.49027085452144,104,stockout,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured; hold action with zero order quantity
+2025-12-29,SKU_B,DC_01,2,order_moq,96,96,24,14,126,135.55741288601854,297.49027085452144,104,stockout,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured
+2025-12-29,SKU_B,DC_01,3,order_1w_cover,0,96,24,14,126,135.55741288601854,297.49027085452144,104,stockout,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured
+2025-12-29,SKU_B,DC_01,4,order_2w_cover,32,96,24,14,126,135.55741288601854,297.49027085452144,104,stockout,FAIL,FAIL,PASS,PASS,PASS,FAIL,2,candidate_order_qty is below moq_qty; candidate_order_qty is not a box_multiple_qty multiple; max_order_qty not configured
+2025-12-29,SKU_B,DC_01,5,expedite,0,96,24,14,126,135.55741288601854,297.49027085452144,104,stockout,PASS,PASS,PASS,PASS,PASS,PASS,0,expedite candidate; lead time gate reviewed separately; max_order_qty not configured
+2025-12-29,SKU_B,DC_01,6,reduce_review,0,96,24,14,126,135.55741288601854,297.49027085452144,104,stockout,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured; reduce_review action with zero order quantity
+2025-12-29,SKU_C,DC_01,1,hold,0,18,6,7,21,27.26560972631954,51.54987092299781,31,expiry,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured; hold action with zero order quantity
+2025-12-29,SKU_C,DC_01,2,order_moq,18,18,6,7,21,27.26560972631954,51.54987092299781,31,expiry,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured
+2025-12-29,SKU_C,DC_01,3,order_1w_cover,0,18,6,7,21,27.26560972631954,51.54987092299781,31,expiry,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured
+2025-12-29,SKU_C,DC_01,4,order_2w_cover,0,18,6,7,21,27.26560972631954,51.54987092299781,31,expiry,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured
+2025-12-29,SKU_C,DC_01,5,expedite,0,18,6,7,21,27.26560972631954,51.54987092299781,31,expiry,PASS,PASS,PASS,PASS,PASS,PASS,0,expedite candidate; lead time gate reviewed separately; max_order_qty not configured
+2025-12-29,SKU_C,DC_01,6,reduce_review,0,18,6,7,21,27.26560972631954,51.54987092299781,31,expiry,PASS,PASS,PASS,PASS,PASS,PASS,0,max_order_qty not configured; reduce_review action with zero order quantity; expiry or overstock risk supports reduction review
