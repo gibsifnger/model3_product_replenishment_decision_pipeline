@@ -95,3 +95,11 @@ python scripts/07_run_gate_check.py
 ```
 
 The gate checker validates candidate orders against operational constraints and writes pass/fail results to `data/output/06_gate_result.csv`.
+
+## Stage 8 digital twin simulation
+
+```bash
+python scripts/08_run_simulation.py
+```
+
+The simulator evaluates gate-passed candidate actions over four future weeks and writes results to `data/simulation/`.
