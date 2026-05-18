@@ -103,3 +103,11 @@ python scripts/08_run_simulation.py
 ```
 
 The simulator evaluates gate-passed candidate actions over four future weeks and writes results to `data/simulation/`.
+
+## Stage 9 final policy decision
+
+```bash
+python scripts/09_run_hgb_simulation_policy.py
+```
+
+The policy step selects final actions from existing gate-passed simulation results and writes `data/output/07_final_decision.csv`.

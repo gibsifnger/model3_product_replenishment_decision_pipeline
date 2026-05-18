@@ -1,0 +1,7 @@
+﻿snapshot_week,sku_id,warehouse_id,policy_name,selected_action_id,selected_action_name,recommended_order_qty,selected_total_cost,total_forecast_qty,total_stockout_qty,total_expired_qty,ending_inventory_qty,primary_risk_type,selection_reason
+2025-12-29,SKU_A,DC_01,rule_based,2,order_moq,48,1106.7179652675184,351.56526841192795,191.56526841192797,0.0,0.0,stockout,stockout risk rule considered preferred actions and selected lowest total_cost
+2025-12-29,SKU_B,DC_01,rule_based,2,order_moq,96,457.4856621538687,297.49027085452144,97.4902708545214,0.0,0.0,stockout,stockout risk rule considered preferred actions and selected lowest total_cost
+2025-12-29,SKU_C,DC_01,rule_based,1,hold,0,195.61815654536724,51.549870922997805,21.32757460190697,0.7777036789091651,0.0,expiry,expiry risk rule considered preferred actions and selected lowest total_cost
+2025-12-29,SKU_A,DC_01,hgb_simulation,2,order_moq,48,1106.7179652675184,351.56526841192795,191.56526841192797,0.0,0.0,stockout,Selected lowest total_cost among gate-passed simulated candidates
+2025-12-29,SKU_B,DC_01,hgb_simulation,2,order_moq,96,457.4856621538687,297.49027085452144,97.4902708545214,0.0,0.0,stockout,Selected lowest total_cost among gate-passed simulated candidates
+2025-12-29,SKU_C,DC_01,hgb_simulation,1,hold,0,195.61815654536724,51.549870922997805,21.32757460190697,0.7777036789091651,0.0,expiry,Expiry risk >= 0.7 and order_moq savings versus hold below 20%; selected conservative action
