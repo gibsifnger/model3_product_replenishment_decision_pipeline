@@ -135,3 +135,11 @@ python scripts/10_train_rl_policy.py --train-lightweight
 ```
 
 The lightweight challenger trains a Q-table epsilon-greedy policy and writes `data/output/10_rl_training_log.csv` and `data/output/11_rl_decision_trace.csv`.
+
+## Stage 12 policy comparison
+
+```bash
+python scripts/11_evaluate_policies.py
+```
+
+The evaluator compares rule-based, HGB simulation, and lightweight RL selections and writes `data/output/09_policy_comparison.csv`.
