@@ -1,0 +1,13 @@
+forecast_run_week,target_week,sku_id,warehouse_id,forecast_horizon_week,forecast_qty,model_name,training_rows
+2025-12-29,2026-01-05,SKU_A,DC_01,1,86.8146397362967,HistGradientBoostingRegressor,150
+2025-12-29,2026-01-12,SKU_A,DC_01,2,91.41076414406106,HistGradientBoostingRegressor,150
+2025-12-29,2026-01-19,SKU_A,DC_01,3,86.49554600635848,HistGradientBoostingRegressor,150
+2025-12-29,2026-01-26,SKU_A,DC_01,4,86.84431852521172,HistGradientBoostingRegressor,150
+2025-12-29,2026-01-05,SKU_B,DC_01,1,64.40444162264761,HistGradientBoostingRegressor,150
+2025-12-29,2026-01-12,SKU_B,DC_01,2,71.15297126337093,HistGradientBoostingRegressor,150
+2025-12-29,2026-01-19,SKU_B,DC_01,3,64.21746186181099,HistGradientBoostingRegressor,150
+2025-12-29,2026-01-26,SKU_B,DC_01,4,97.71539610669187,HistGradientBoostingRegressor,150
+2025-12-29,2026-01-05,SKU_C,DC_01,1,13.38918528436334,HistGradientBoostingRegressor,150
+2025-12-29,2026-01-12,SKU_C,DC_01,2,13.876424441956202,HistGradientBoostingRegressor,150
+2025-12-29,2026-01-19,SKU_C,DC_01,3,12.910454745898711,HistGradientBoostingRegressor,150
+2025-12-29,2026-01-26,SKU_C,DC_01,4,11.373806450779556,HistGradientBoostingRegressor,150

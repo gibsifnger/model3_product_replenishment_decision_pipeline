@@ -63,3 +63,11 @@ python scripts/03_build_features.py
 ```
 
 The feature builder reads the four input CSVs and writes the current-state `sku_id × warehouse_id` snapshot to `data/output/02_feature_snapshot.csv`.
+
+## Stage 4 demand forecast
+
+```bash
+python scripts/04_run_demand_forecast.py
+```
+
+The HGB forecaster reads sales, promotion, and feature snapshot inputs, then writes the 4-week demand forecast to `data/output/03_demand_forecast.csv`.
