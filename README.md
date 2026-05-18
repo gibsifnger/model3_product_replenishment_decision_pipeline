@@ -111,3 +111,11 @@ python scripts/09_run_hgb_simulation_policy.py
 ```
 
 The policy step selects final actions from existing gate-passed simulation results and writes `data/output/07_final_decision.csv`.
+
+## Stage 10 decision trace
+
+```bash
+python scripts/10_build_decision_trace.py
+```
+
+The trace builder explains already selected final actions and writes `data/output/08_decision_trace.csv`.
