@@ -16,7 +16,9 @@ from inventory_purchase_integrated.reinforcement_learning.rl_environment import 
     ReplenishmentDecisionEnv,
 )
 from inventory_purchase_integrated.reinforcement_learning.rl_policy import (
+    DQNSmokeTrainingConfig,
     LightweightRLConfig,
+    write_dqn_smoke_outputs,
     write_lightweight_rl_outputs,
 )
 from inventory_purchase_integrated.reinforcement_learning.reward_model import REWARD_SCALE
@@ -63,6 +65,17 @@ def run_lightweight_training() -> None:
     print(decision_trace.to_string(index=False))
 
 
+def run_dqn_training() -> None:
+    config = DQNSmokeTrainingConfig()
+    training_log, decision_trace = write_dqn_smoke_outputs(config=config)
+
+    print("\n[dqn_training_log] wrote rows to data/output/12_dqn_training_log.csv")
+    print("training summary:")
+    print(training_log.to_string(index=False))
+    print("\nDQN decision trace:")
+    print(decision_trace.to_string(index=False))
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -75,6 +88,11 @@ def main() -> None:
         action="store_true",
         help="Train Q-table epsilon-greedy RL challenger.",
     )
+    parser.add_argument(
+        "--train-dqn",
+        action="store_true",
+        help="Run Stable-Baselines3 DQN advanced smoke training.",
+    )
     args = parser.parse_args()
 
     if args.smoke_test:
@@ -83,8 +101,11 @@ def main() -> None:
     if args.train_lightweight:
         run_lightweight_training()
         return
+    if args.train_dqn:
+        run_dqn_training()
+        return
 
-    raise SystemExit("Use --smoke-test or --train-lightweight.")
+    raise SystemExit("Use --smoke-test, --train-lightweight, or --train-dqn.")
 
 
 if __name__ == "__main__":

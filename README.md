@@ -143,3 +143,11 @@ python scripts/11_evaluate_policies.py
 ```
 
 The evaluator compares rule-based, HGB simulation, and lightweight RL selections and writes `data/output/09_policy_comparison.csv`.
+
+## Stage 13-A DQN smoke training
+
+```bash
+python scripts/10_train_rl_policy.py --train-dqn
+```
+
+This advanced smoke test runs a tiny Stable-Baselines3 DQN training session and writes `data/output/12_dqn_training_log.csv` and `data/output/12_dqn_decision_trace.csv`. If Python/PyTorch compatibility issues occur, use a Python 3.10-3.12 environment.

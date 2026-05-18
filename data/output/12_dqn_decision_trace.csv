@@ -1,0 +1,4 @@
+﻿snapshot_week,sku_id,warehouse_id,policy_name,selected_action_id,selected_action_name,recommended_order_qty,selected_total_cost,raw_reward,reward,primary_risk_type,simulation_status,dqn_warning,dqn_reason
+2025-12-29,SKU_A,DC_01,dqn,0,hold,0,1255.1819652675183,-1255.1819652675183,-1.2551819652675182,stockout,SIMULATED,,DQN smoke policy selected this action using deterministic prediction after a minimal 1000-step compatibility training run.
+2025-12-29,SKU_B,DC_01,dqn,0,hold,0,665.6289693447147,-665.6289693447147,-0.6656289693447147,stockout,SIMULATED,,DQN smoke policy selected this action using deterministic prediction after a minimal 1000-step compatibility training run.
+2025-12-29,SKU_C,DC_01,dqn,5,reduce_review,0,195.61815654536724,-195.61815654536724,-0.19561815654536724,expiry,SIMULATED,,DQN smoke policy selected this action using deterministic prediction after a minimal 1000-step compatibility training run.

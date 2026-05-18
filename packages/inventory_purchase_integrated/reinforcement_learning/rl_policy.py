@@ -19,6 +19,8 @@ CANDIDATE_ORDERS_FILENAME = "05_candidate_orders.csv"
 CANDIDATE_SIMULATION_RESULT_FILENAME = "candidate_simulation_result.csv"
 RL_TRAINING_LOG_FILENAME = "10_rl_training_log.csv"
 RL_DECISION_TRACE_FILENAME = "11_rl_decision_trace.csv"
+DQN_TRAINING_LOG_FILENAME = "12_dqn_training_log.csv"
+DQN_DECISION_TRACE_FILENAME = "12_dqn_decision_trace.csv"
 
 SIMULATION_DATA_DIR = OUTPUT_DATA_DIR.parent / "simulation"
 DEFAULT_RISK_SCORE_PATH = OUTPUT_DATA_DIR / RISK_SCORE_FILENAME
@@ -28,6 +30,8 @@ DEFAULT_CANDIDATE_SIMULATION_RESULT_PATH = (
 )
 DEFAULT_RL_TRAINING_LOG_PATH = OUTPUT_DATA_DIR / RL_TRAINING_LOG_FILENAME
 DEFAULT_RL_DECISION_TRACE_PATH = OUTPUT_DATA_DIR / RL_DECISION_TRACE_FILENAME
+DEFAULT_DQN_TRAINING_LOG_PATH = OUTPUT_DATA_DIR / DQN_TRAINING_LOG_FILENAME
+DEFAULT_DQN_DECISION_TRACE_PATH = OUTPUT_DATA_DIR / DQN_DECISION_TRACE_FILENAME
 
 TRAINING_LOG_COLUMNS = (
     "episode",
@@ -62,7 +66,36 @@ RL_DECISION_TRACE_COLUMNS = (
     "rl_reason",
 )
 
+DQN_TRAINING_LOG_COLUMNS = (
+    "algorithm",
+    "total_timesteps",
+    "seed",
+    "episode_count_estimate",
+    "final_episode_total_reward",
+    "final_episode_total_cost",
+    "training_status",
+    "note",
+)
+
+DQN_DECISION_TRACE_COLUMNS = (
+    "snapshot_week",
+    "sku_id",
+    "warehouse_id",
+    "policy_name",
+    "selected_action_id",
+    "selected_action_name",
+    "recommended_order_qty",
+    "selected_total_cost",
+    "raw_reward",
+    "reward",
+    "primary_risk_type",
+    "simulation_status",
+    "dqn_warning",
+    "dqn_reason",
+)
+
 POLICY_NAME = "rl_lightweight"
+DQN_POLICY_NAME = "dqn"
 
 
 @dataclass(frozen=True)
@@ -73,6 +106,13 @@ class LightweightRLConfig:
     epsilon_start: float = 1.0
     epsilon_end: float = 0.05
     random_seed: int = 42
+
+
+@dataclass(frozen=True)
+class DQNSmokeTrainingConfig:
+    total_timesteps: int = 1000
+    seed: int = 42
+    verbose: int = 0
 
 
 def _epsilon_for_episode(episode: int, config: LightweightRLConfig) -> float:
@@ -259,6 +299,141 @@ def write_lightweight_rl_outputs(
     log_path = training_log_path or DEFAULT_RL_TRAINING_LOG_PATH
     trace_path = decision_trace_path or DEFAULT_RL_DECISION_TRACE_PATH
     training_log, decision_trace = train_lightweight_rl_challenger(config=config)
+
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    trace_path.parent.mkdir(parents=True, exist_ok=True)
+    training_log.to_csv(log_path, index=False, encoding="utf-8-sig")
+    decision_trace.to_csv(trace_path, index=False, encoding="utf-8-sig")
+    return training_log, decision_trace
+
+
+def train_dqn_smoke(
+    config: DQNSmokeTrainingConfig | None = None,
+    candidate_orders_path: Path | None = None,
+    risk_score_path: Path | None = None,
+    simulation_result_path: Path | None = None,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Run a tiny Stable-Baselines3 DQN smoke training session."""
+    cfg = config or DQNSmokeTrainingConfig()
+    try:
+        from stable_baselines3 import DQN
+    except ModuleNotFoundError as exc:
+        raise ModuleNotFoundError(
+            "stable-baselines3 is required for --train-dqn. Install requirements first."
+        ) from exc
+
+    env = ReplenishmentDecisionEnv(
+        risk_score_path=risk_score_path,
+        simulation_result_path=simulation_result_path,
+    )
+    model = DQN(
+        "MlpPolicy",
+        env,
+        seed=cfg.seed,
+        verbose=cfg.verbose,
+        learning_starts=10,
+        buffer_size=1000,
+        batch_size=16,
+        train_freq=1,
+        gradient_steps=1,
+        exploration_fraction=0.4,
+        exploration_final_eps=0.05,
+    )
+    model.learn(total_timesteps=cfg.total_timesteps)
+
+    decision_trace, final_reward, final_cost = _evaluate_dqn_policy(
+        model=model,
+        env=env,
+        candidate_orders_path=candidate_orders_path or DEFAULT_CANDIDATE_ORDERS_PATH,
+        risk_score_path=risk_score_path or DEFAULT_RISK_SCORE_PATH,
+    )
+    training_log = pd.DataFrame(
+        [
+            {
+                "algorithm": "DQN",
+                "total_timesteps": cfg.total_timesteps,
+                "seed": cfg.seed,
+                "episode_count_estimate": int(np.ceil(cfg.total_timesteps / len(env.items))),
+                "final_episode_total_reward": final_reward,
+                "final_episode_total_cost": final_cost,
+                "training_status": "SUCCESS",
+                "note": "Advanced smoke training only; short 3-step episodes are not performance evidence.",
+            }
+        ],
+        columns=DQN_TRAINING_LOG_COLUMNS,
+    )
+    return training_log, decision_trace
+
+
+def _evaluate_dqn_policy(
+    model: object,
+    env: ReplenishmentDecisionEnv,
+    candidate_orders_path: Path,
+    risk_score_path: Path,
+) -> tuple[pd.DataFrame, float, float]:
+    candidates = pd.read_csv(candidate_orders_path, encoding="utf-8-sig")
+    risk = pd.read_csv(risk_score_path, encoding="utf-8-sig")
+    risk_lookup = {
+        (row.sku_id, row.warehouse_id): row
+        for row in risk.itertuples(index=False)
+    }
+
+    observation, _ = env.reset()
+    terminated = False
+    total_reward = 0.0
+    total_cost = 0.0
+    rows: list[dict[str, object]] = []
+
+    while not terminated:
+        action, _ = model.predict(observation, deterministic=True)
+        action_id = int(action)
+        observation, reward, terminated, _, info = env.step(action_id)
+        total_reward += reward
+        total_cost += float(info["total_cost"])
+
+        candidate = candidates[
+            (candidates["sku_id"] == info["sku_id"])
+            & (candidates["warehouse_id"] == info["warehouse_id"])
+            & (candidates["action_id"] == action_id)
+            & (candidates["action_name"] == info["action_name"])
+        ].iloc[0]
+        risk_row = risk_lookup[(info["sku_id"], info["warehouse_id"])]
+        gate_failed = info.get("overall_gate_status") != "PASS"
+
+        rows.append(
+            {
+                "snapshot_week": risk_row.snapshot_week,
+                "sku_id": info["sku_id"],
+                "warehouse_id": info["warehouse_id"],
+                "policy_name": DQN_POLICY_NAME,
+                "selected_action_id": action_id,
+                "selected_action_name": info["action_name"],
+                "recommended_order_qty": candidate["candidate_order_qty"],
+                "selected_total_cost": info["total_cost"],
+                "raw_reward": info["raw_reward"],
+                "reward": reward,
+                "primary_risk_type": risk_row.primary_risk_type,
+                "simulation_status": info["simulation_status"],
+                "dqn_warning": "gate FAIL action selected" if gate_failed else "",
+                "dqn_reason": (
+                    "DQN smoke policy selected this action using deterministic prediction "
+                    "after a minimal 1000-step compatibility training run."
+                ),
+            }
+        )
+
+    return pd.DataFrame(rows, columns=DQN_DECISION_TRACE_COLUMNS), total_reward, total_cost
+
+
+def write_dqn_smoke_outputs(
+    training_log_path: Path | None = None,
+    decision_trace_path: Path | None = None,
+    config: DQNSmokeTrainingConfig | None = None,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Train DQN smoke extension and write DQN-only outputs."""
+    log_path = training_log_path or DEFAULT_DQN_TRAINING_LOG_PATH
+    trace_path = decision_trace_path or DEFAULT_DQN_DECISION_TRACE_PATH
+    training_log, decision_trace = train_dqn_smoke(config=config)
 
     log_path.parent.mkdir(parents=True, exist_ok=True)
     trace_path.parent.mkdir(parents=True, exist_ok=True)
