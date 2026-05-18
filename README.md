@@ -55,3 +55,11 @@ python scripts/02_run_validation.py
 ```
 
 The validation script checks the four input CSVs against the schema contract and writes `data/output/01_input_quality_check.csv`.
+
+## Stage 3 feature snapshot
+
+```bash
+python scripts/03_build_features.py
+```
+
+The feature builder reads the four input CSVs and writes the current-state `sku_id × warehouse_id` snapshot to `data/output/02_feature_snapshot.csv`.
