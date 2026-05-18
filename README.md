@@ -119,3 +119,19 @@ python scripts/10_build_decision_trace.py
 ```
 
 The trace builder explains already selected final actions and writes `data/output/08_decision_trace.csv`.
+
+## Stage 11-A RL environment smoke test
+
+```bash
+python scripts/10_train_rl_policy.py --smoke-test
+```
+
+The smoke test validates environment reset and three SKU-level steps without training an RL policy.
+
+## Stage 11-B lightweight RL challenger
+
+```bash
+python scripts/10_train_rl_policy.py --train-lightweight
+```
+
+The lightweight challenger trains a Q-table epsilon-greedy policy and writes `data/output/10_rl_training_log.csv` and `data/output/11_rl_decision_trace.csv`.

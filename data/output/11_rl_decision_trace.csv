@@ -1,0 +1,4 @@
+﻿snapshot_week,sku_id,warehouse_id,policy_name,selected_action_id,selected_action_name,recommended_order_qty,selected_total_cost,raw_reward,reward,primary_risk_type,q_value,action_rank,rl_reason
+2025-12-29,SKU_A,DC_01,rl_lightweight,1,order_moq,48,1106.7179652675184,-1106.7179652675184,-1.1067179652675183,stockout,-1.106685303070483,1,RL challenger selected order_moq because it produced the highest learned reward for SKU_A.
+2025-12-29,SKU_B,DC_01,rl_lightweight,1,order_moq,96,457.4856621538687,-457.4856621538687,-0.4574856621538687,stockout,-0.4574798501486231,1,RL challenger selected order_moq because it produced the highest learned reward for SKU_B.
+2025-12-29,SKU_C,DC_01,rl_lightweight,1,order_moq,18,158.88966383592893,-158.88966383592893,-0.15888966383592892,expiry,-0.1588862453672193,1,RL challenger selected order_moq because it produced the highest learned reward for SKU_C.
