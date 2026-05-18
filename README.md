@@ -79,3 +79,11 @@ python scripts/05_run_risk_score.py
 ```
 
 The risk model reads the feature snapshot and demand forecast, then writes SKU-warehouse risk scores to `data/output/04_risk_score.csv`.
+
+## Stage 6 candidate orders
+
+```bash
+python scripts/06_generate_candidates.py
+```
+
+The candidate generator expands each SKU-warehouse row across fixed actions and writes order candidates to `data/output/05_candidate_orders.csv`.
