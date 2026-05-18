@@ -71,3 +71,11 @@ python scripts/04_run_demand_forecast.py
 ```
 
 The HGB forecaster reads sales, promotion, and feature snapshot inputs, then writes the 4-week demand forecast to `data/output/03_demand_forecast.csv`.
+
+## Stage 5 risk score
+
+```bash
+python scripts/05_run_risk_score.py
+```
+
+The risk model reads the feature snapshot and demand forecast, then writes SKU-warehouse risk scores to `data/output/04_risk_score.csv`.

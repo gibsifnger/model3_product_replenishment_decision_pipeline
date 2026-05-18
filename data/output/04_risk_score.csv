@@ -1,0 +1,4 @@
+﻿snapshot_week,sku_id,warehouse_id,forecast_4w_total_qty,available_qty,inventory_cover_weeks,inbound_cover_weeks,stockout_risk_score,overstock_risk_score,expiry_risk_score,supplier_risk_score,total_risk_score,primary_risk_type,risk_comment
+2025-12-29,SKU_A,DC_01,351.56526841192795,112,1.4,1.4,0.6814247308731022,0.0,0.0,0.12,0.25649865580558573,stockout,SKU_A: 향후 4주 예측수요 대비 가용재고가 부족해 품절위험이 높음
+2025-12-29,SKU_B,DC_01,297.49027085452144,104,1.8995433789954337,1.8995433789954337,0.6504087353806,0.0,0.0,0.18,0.25464305738320997,stockout,SKU_B: 향후 4주 예측수요 대비 가용재고가 부족해 품절위험이 높음
+2025-12-29,SKU_C,DC_01,51.54987092299781,31,2.1379310344827585,2.1379310344827585,0.39864058929835167,0.031034482758620655,0.7966666666666666,0.28,0.3884494936107449,expiry,SKU_C: 짧은 유통기한과 최근 폐기 이력으로 폐기위험이 높음
